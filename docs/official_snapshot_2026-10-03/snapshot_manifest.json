@@ -1,0 +1,32 @@
+{
+  "snapshot_recorded_at_utc": "2026-10-03T20:22:06.956061+00:00",
+  "files": {
+    "README.md": "a21b9fe7a56c602bd77ff86b76df46d229e764d15efa308e300642db3f1d7616",
+    "cross_subject_abstract.md": "f73bd3e29afe3073feca6bfc27a0b81798fbb3b9e4ab2fdeeca56ecf8c924f0e",
+    "cross_subject_data-description.md": "1056a3d11833814de2c126cdae99ec7b423aeef82b059732182b8c7dd20c4c05",
+    "cross_subject_databundle.json": "27ecfe452a4ddd136c9bace03d7bc4b86ba145c570204b024e41cc1c2e801db7",
+    "cross_subject_description.md": "3ba19ca336b826e049a37ecef6cc5481e7b5de2130ee0ed3e1b8775fff698c7e",
+    "cross_subject_evaluation.md": "7dbdf2eaa8273d8e1efe901967b955a8e0081da4d50c969c1f1c685e96776583",
+    "cross_subject_forum_topics.json": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "cross_subject_foundational-rules.md": "3106b398b76d8ec4d92708b5fc55afd96524774e6f28718437f025ab22e0a6f4",
+    "cross_subject_metadata.json": "146596d252d7332240e25a997956d3c4e8fd18cffde4a23b0221e7691deb9917",
+    "cross_subject_pages.json": "f88b62428b99bd70499f22f12b671dec84d0d77751830616d2c39920709be92a",
+    "cross_subject_prizes.md": "babed6189a7bd87360404683e424b79a0a353cafb8c3d3b169191f4b650976e3",
+    "cross_subject_rules.md": "b31ed79394dca4d3c6130fedbbeb6c4de42e9a5d52e063c0201af9f60e400cd6",
+    "notebook_platform_limits.json": "28b3a872716101cc58511e48a1f4b2fa340881fa34fb0a1faf95f2c5ad29f207",
+    "organizer_messages.json": "77c2aad638fb06a557eea1ccc02b7160c4c1cce55cb748ed996e270e0544248c",
+    "organizer_topic.json": "3f5fd6b09e3c13bb67b1922084f235113982e1a0ce13282ea4d3e6af6a94300d",
+    "within_subject_abstract.md": "f31dd72fa69a9e34542a778193a44c9c8e6b418f1dbfb5660b72d57b5e22dc1b",
+    "within_subject_citation.md": "ecb1ab8e132dbbc2b889d810e5a7c3a77f1f7f3adb4ffeafa1550b9be8da2c4e",
+    "within_subject_data-description.md": "2306f2551db4765bfcfba6d7824ca7c42d25b14d588ca2090ca8b474b4b1b9fc",
+    "within_subject_databundle.json": "2fd83338c83e2562653a5367be4f251e5e3a8ea499d7f2bd09bdc3eeb0693af1",
+    "within_subject_description.md": "fb0f9cf99f86a0e1bdc7abc50b378fd29c95823272c96bde6fb3633ff7c72260",
+    "within_subject_evaluation.md": "3df7b0e9c09d730511bbb300a498e38cad322cef8a138dbc5340dfe60047d6e2",
+    "within_subject_forum_topics.json": "60b0f25b470654d8c4d34bcf993335121473d2d149da0fb25896ab7911bd88c8",
+    "within_subject_foundational-rules.md": "3106b398b76d8ec4d92708b5fc55afd96524774e6f28718437f025ab22e0a6f4",
+    "within_subject_metadata.json": "e818e89fc7358db5662835a9111ba48f7dc4815e9aedfa2b7f95a59eef303b56",
+    "within_subject_pages.json": "f999d6831cf366266f3a9d6948bd9ce7cc129bc027879ed709ec783c41e2c11e",
+    "within_subject_prizes.md": "560eea81f46b7ba58a9a92c5003d242d269c9a144b21ec8343a9c2891889ccc5",
+    "within_subject_rules.md": "3d45b80956b799e649e2c0ada595855bf7743b88e15d2651d26adfc269dba4e8"
+  }
+}

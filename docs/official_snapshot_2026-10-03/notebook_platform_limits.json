@@ -1,0 +1,21 @@
+{
+  "retrieved_date": "2026-10-03",
+  "source": "https://www.kaggle.com/docs/notebooks#technical-specifications",
+  "scope": "Generic Kaggle platform documentation; challenge-specific limits and user quota not verified",
+  "cpu_gpu_session_and_save_run_all_hours": 12,
+  "tpu_hours": 9,
+  "persisted_working_disk_gb": 20,
+  "cpu": {
+    "cores": 4,
+    "ram_gb": 30
+  },
+  "gpu": {
+    "choices": [
+      "P100",
+      "T4 x2"
+    ],
+    "cpu_cores": 4,
+    "ram_gb": 29
+  },
+  "retrieval_method": "web open plus search result containing primary official documentation"
+}

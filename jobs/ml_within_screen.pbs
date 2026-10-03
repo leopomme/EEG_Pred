@@ -1,0 +1,10 @@
+#!/bin/bash
+#PBS -N eeg_ml_within
+#PBS -l select=1:ncpus=4:mem=12gb
+#PBS -l walltime=00:40:00
+#PBS -j oe
+set -euo pipefail
+cd /rds/general/user/lh5218/home/EEG_pred
+exec > logs/ml_within_screen.log 2>&1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+/rds/general/user/lh5218/home/anaconda3/envs/myenv/bin/python -u scripts/run_classical.py --competition within_subject --output results/within_subject/ml_screen

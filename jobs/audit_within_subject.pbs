@@ -1,0 +1,12 @@
+#!/bin/bash
+#PBS -N eeg_audit_within
+#PBS -l select=1:ncpus=2:mem=8gb
+#PBS -l walltime=00:15:00
+#PBS -j oe
+
+set -euo pipefail
+cd /rds/general/user/lh5218/home/EEG_pred
+mkdir -p logs
+exec > logs/audit_within_subject.log 2>&1
+export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2
+/rds/general/user/lh5218/home/anaconda3/envs/myenv/bin/python -u scripts/audit_data.py --competition within_subject

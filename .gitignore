@@ -1,0 +1,36 @@
+# Data / external research
+data/
+external_doc_eg_kagle/
+extraernal_doc_eg_kagle/
+artifacts/
+logs/
+results/
+submissions/
+
+# Archives
+*.zip
+*.tar
+*.tar.gz
+*.7z
+
+# Models / checkpoints
+*.pt
+*.pth
+*.ckpt
+*.bin
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Jupyter / macOS
+.ipynb_checkpoints/
+.DS_Store
+
+# Imperial PBS output/error files
+*.o
+*.e
+*.o[0-9]*
+*.e[0-9]*

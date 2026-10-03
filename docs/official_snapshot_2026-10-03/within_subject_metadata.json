@@ -1,0 +1,102 @@
+{
+  "id": 143178,
+  "competitionName": "low-cost-motor-imagery-decoding-for-rehab",
+  "title": "Low Cost Motor Imagery Decoding for Rehab (Single Subject)",
+  "briefDescription": "Design a ML or DL EEG Brain Computer Interface decoding pipeline for individual robotic-assisted stroke rehabilitation",
+  "dateEnabled": "2026-09-22T13:39:39.600Z",
+  "deadline": "2027-02-19T00:00:00Z",
+  "hasLeaderboard": true,
+  "leaderboardPercentage": 60,
+  "maxDailySubmissions": 5,
+  "numScoredSubmissions": 2,
+  "hasSolution": true,
+  "numPrizes": 1,
+  "forumId": 11288053,
+  "publicLeaderboardDisclaimerMessage": "",
+  "dateCreated": "2026-05-18T10:59:34.752223300Z",
+  "competitionHostSegmentId": 10,
+  "maxTeamSize": 5,
+  "totalSolutionRows": 680,
+  "organizationId": 5406,
+  "hasCoverImageUrl": true,
+  "hasScripts": true,
+  "totalTeams": 24,
+  "totalCompetitors": 24,
+  "totalSubmissions": 139,
+  "rulesRequired": true,
+  "rowIdColumnName": "ID",
+  "evaluationAlgorithm": {
+    "id": 474,
+    "name": "Accuracy Score",
+    "isMax": true,
+    "isPublic": true,
+    "environmentRenderType": "ENVIRONMENT_RENDER_TYPE_JSON",
+    "kernelId": 39243584,
+    "latestCompetitionMetricVersionId": 17210,
+    "state": "AVAILABLE"
+  },
+  "categories": [
+    {
+      "id": 13302,
+      "name": "classification",
+      "fullPath": "task > classification",
+      "datasetCount": 59911,
+      "competitionCount": 250,
+      "scriptCount": 22996,
+      "slug": "classification",
+      "displayName": "Classification"
+    },
+    {
+      "id": 12005,
+      "name": "biotechnology",
+      "fullPath": "subject > science and technology > biotechnology",
+      "description": "Biotechnology is the use of living systems and organisms to develop or make products.",
+      "datasetCount": 568,
+      "competitionCount": 18,
+      "scriptCount": 268,
+      "slug": "biotechnology",
+      "displayName": "Biotechnology"
+    },
+    {
+      "id": 1219,
+      "name": "research",
+      "fullPath": "subject > science and technology > research",
+      "description": "Research is our endeavor to systematically increase our knowledge about the world. Whether it's undertaken by greats like Einstein or underpaid graduate students, you'll find the fruits of their labor in this tag plus the kernels that make their work reproducible.",
+      "datasetCount": 3324,
+      "competitionCount": 32,
+      "scriptCount": 1310,
+      "slug": "research",
+      "displayName": "Research"
+    },
+    {
+      "name": "accuracy score",
+      "description": "Accuracy classification score. See https://scikit-learn.org/stable/modules/generated/sklearn.metrics.accuracy_score.html",
+      "displayName": "Accuracy Score"
+    }
+  ],
+  "organization": {
+    "slug": "UKBCIC",
+    "name": "UK BCI Consortium",
+    "thumbnailImageUrl": "https://storage.googleapis.com/kaggle-organizations/5406/thumbnail.png?t=2026-07-29-12-12-11",
+    "profileUrl": "/organizations/UKBCIC"
+  },
+  "launched": true,
+  "createdByUserId": 8169116,
+  "enableUserEmailShare": true,
+  "license": {
+    "id": 3,
+    "name": "CC BY-NC-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "agreementRequired": false
+  },
+  "hostName": "UK BCI Consortium",
+  "scoreTruncationNumDecimals": 2,
+  "totalJoinedUsers": 57,
+  "submissionSizeLimitMb": 20480,
+  "reward": {
+    "id": "USD",
+    "quantity": 650,
+    "clarification": "1st - $500 + co-author on paper, 2nd - $150 + co-author, 3rd - co-author"
+  },
+  "fileBasedSubmissions": true
+}

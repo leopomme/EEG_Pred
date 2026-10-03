@@ -1,0 +1,43 @@
+{
+  "topics": [
+    {
+      "authorUser": {
+        "displayName": "Andre",
+        "thumbnailUrl": "https://storage.googleapis.com/kaggle-avatars/thumbnails/default-thumb.png",
+        "url": "/andreagalesso",
+        "tier": "CONTRIBUTOR",
+        "id": 36375275,
+        "progressionOptOut": true
+      },
+      "authorType": "TOPIC",
+      "commentCount": 2,
+      "firstForumMessageId": 3528282,
+      "id": 743366,
+      "lastCommenterType": "COMMENT",
+      "lastCommenterName": "Noam Asayag",
+      "lastCommenterUrl": "/competitions/low-cost-motor-imagery-decoding-for-rehab/discussion/743366#3532430",
+      "lastCommentPostDate": "2026-10-03T14:09:30.673333300Z",
+      "parentName": "Low Cost Motor Imagery Decoding for Rehab (Single Subject)",
+      "parentUrl": "/competitions/low-cost-motor-imagery-decoding-for-rehab/discussion",
+      "postDate": "2026-09-25T18:48:39.089889Z",
+      "title": "Clarifications on prizes, final notebook and contact email",
+      "topicUrl": "/competitions/low-cost-motor-imagery-decoding-for-rehab/discussion/743366",
+      "teamUpInfo": {
+        "teamLeader": {
+          "displayName": "Andre",
+          "thumbnailUrl": "https://storage.googleapis.com/kaggle-avatars/thumbnails/default-thumb.png",
+          "url": "/andreagalesso",
+          "userName": "andreagalesso",
+          "tier": "CONTRIBUTOR",
+          "id": 36375275,
+          "profileUrl": "/andreagalesso",
+          "performanceTier": "CONTRIBUTOR",
+          "userId": 36375275,
+          "progressionOptOut": true
+        },
+        "intro": ""
+      }
+    }
+  ],
+  "count": 1
+}

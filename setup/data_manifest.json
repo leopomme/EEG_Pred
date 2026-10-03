@@ -1,0 +1,16 @@
+[
+  {
+    "archive": "low-cost-motor-imagery-decoding-for-rehab.zip",
+    "destination": "data/within_subject",
+    "files": 67,
+    "uncompressed_bytes": 626354491,
+    "crc_verified": true
+  },
+  {
+    "archive": "low-cost-motor-imagery-decoding-for-rehab-cross-subject.zip",
+    "destination": "data/cross_subject",
+    "files": 59,
+    "uncompressed_bytes": 568722202,
+    "crc_verified": true
+  }
+]

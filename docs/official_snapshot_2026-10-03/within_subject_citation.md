@@ -1,0 +1,1 @@
+Alexander Thomas, Joshua Podmore, Rishan Patel, Anirban Chowdhury. Low Cost Motor Imagery Decoding for Rehab (Single Subject). https://www.kaggle.com/competitions/low-cost-motor-imagery-decoding-for-rehab, Unpublished. Kaggle

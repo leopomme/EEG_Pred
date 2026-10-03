@@ -1,0 +1,59 @@
+{
+  "python": "3.10.16 | packaged by conda-forge | (main, Dec  5 2024, 14:16:10) [GCC 13.3.0]",
+  "executable": "/rds/general/user/lh5218/home/anaconda3/envs/myenv/bin/python3.10",
+  "imports": {
+    "numpy": {
+      "ok": true,
+      "version": "1.26.4"
+    },
+    "scipy": {
+      "ok": true,
+      "version": "1.15.3"
+    },
+    "pandas": {
+      "ok": true,
+      "version": "1.5.3"
+    },
+    "sklearn": {
+      "ok": true,
+      "version": "1.2.1"
+    },
+    "torch": {
+      "ok": true,
+      "version": "2.3.0+cu121"
+    },
+    "torchvision": {
+      "ok": true,
+      "version": "0.18.0+cu121"
+    },
+    "mne": {
+      "ok": true,
+      "version": "1.12.1"
+    },
+    "h5py": {
+      "ok": true,
+      "version": "3.9.0"
+    },
+    "joblib": {
+      "ok": true,
+      "version": "1.4.2"
+    },
+    "matplotlib": {
+      "ok": true,
+      "version": "3.10.9"
+    },
+    "tqdm": {
+      "ok": true,
+      "version": "4.68.4"
+    },
+    "einops": {
+      "ok": true,
+      "version": "0.6.1"
+    }
+  },
+  "torch": {
+    "cuda_build": "12.1",
+    "cuda_available_on_login": false,
+    "compiled_architectures": []
+  }
+}

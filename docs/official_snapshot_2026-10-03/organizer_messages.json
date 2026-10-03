@@ -1,0 +1,129 @@
+{
+  "comments": [
+    {
+      "id": 3529057,
+      "postDate": "2026-09-27T08:55:56.710Z",
+      "rawMarkdown": "Hi Andre,\n\n1. The $500/$150 is for the overall leaderboard of this competition separate from the other cross participant competition.\n\n2. The Notebook that produces the CSV must be submitted and run in Kaggles environment. If you would like to declare if it's an ML or DL submission, you can do so in the title. We're currently working on a solution to do the declaration automatically and will update the competition shortly (this won't delete your work).\n\n3. We'll reach out to the leading teams closer to the end date of the competition.\n\nI hope this helps answer your queries. If you need anything else let us know.\n",
+      "content": "<p>Hi Andre,</p>\n<ol>\n<li><p>The $500/$150 is for the overall leaderboard of this competition separate from the other cross participant competition.</p></li>\n<li><p>The Notebook that produces the CSV must be submitted and run in Kaggles environment. If you would like to declare if it's an ML or DL submission, you can do so in the title. We're currently working on a solution to do the declaration automatically and will update the competition shortly (this won't delete your work).</p></li>\n<li><p>We'll reach out to the leading teams closer to the end date of the competition.</p></li>\n</ol>\n<p>I hope this helps answer your queries. If you need anything else let us know.</p>",
+      "replies": [
+        {
+          "id": 3532430,
+          "postDate": "2026-10-03T14:09:30.673Z",
+          "rawMarkdown": "Hi Alexander, \nthanks for the earlier clarifications. One more question about the paper: the Overview says the top three teams in each category (ML and DL) will be invited to co-author it, while the Prizes section and the Rules only mention the first three places. Is the invitation per category or for the overall top 3? And does the same apply to the cross-subject competition?",
+          "content": "<p>Hi Alexander, \nthanks for the earlier clarifications. One more question about the paper: the Overview says the top three teams in each category (ML and DL) will be invited to co-author it, while the Prizes section and the Rules only mention the first three places. Is the invitation per category or for the overall top 3? And does the same apply to the cross-subject competition?</p>",
+          "parent": {},
+          "author": {
+            "displayName": "Noam Asayag",
+            "thumbnailUrl": "https://storage.googleapis.com/kaggle-avatars/thumbnails/default-thumb.png",
+            "url": "/noamasayag",
+            "tier": "CONTRIBUTOR",
+            "id": 8719011,
+            "progressionOptOut": false
+          },
+          "authorType": "COMMENT",
+          "votes": {
+            "canUpvote": true
+          },
+          "kernelVersion": 0,
+          "competitionRanking": 8,
+          "feedbackTrackingData": {},
+          "isThankYou": false,
+          "teamUpInfo": {
+            "teamLeader": {
+              "displayName": "Noam Asayag",
+              "thumbnailUrl": "https://storage.googleapis.com/kaggle-avatars/thumbnails/default-thumb.png",
+              "url": "/noamasayag",
+              "userName": "noamasayag",
+              "tier": "CONTRIBUTOR",
+              "id": 8719011,
+              "profileUrl": "/noamasayag",
+              "performanceTier": "CONTRIBUTOR",
+              "userId": 8719011,
+              "progressionOptOut": false
+            },
+            "intro": ""
+          }
+        }
+      ],
+      "parent": {},
+      "author": {
+        "displayName": "Alexander Thomas",
+        "thumbnailUrl": "https://storage.googleapis.com/kaggle-avatars/thumbnails/8169116-kg.jpg",
+        "url": "/alexanderthomas2001",
+        "tier": "CONTRIBUTOR",
+        "id": 8169116,
+        "progressionOptOut": false
+      },
+      "authorType": "HOST",
+      "votes": {
+        "canUpvote": true
+      },
+      "kernelVersion": 0,
+      "feedbackTrackingData": {},
+      "isThankYou": false,
+      "reactions": [
+        {
+          "emoji": "LOVE",
+          "featuredUserNames": [
+            "biomedicaltesla"
+          ],
+          "userCount": 1
+        }
+      ],
+      "teamUpInfo": {
+        "teamLeader": {
+          "displayName": "Alexander Thomas",
+          "thumbnailUrl": "https://storage.googleapis.com/kaggle-avatars/thumbnails/8169116-kg.jpg",
+          "url": "/alexanderthomas2001",
+          "userName": "alexanderthomas2001",
+          "tier": "CONTRIBUTOR",
+          "id": 8169116,
+          "profileUrl": "/alexanderthomas2001",
+          "performanceTier": "CONTRIBUTOR",
+          "userId": 8169116,
+          "progressionOptOut": false
+        },
+        "intro": ""
+      }
+    },
+    {
+      "id": 3528282,
+      "postDate": "2026-09-25T18:48:39.090Z",
+      "rawMarkdown": "Hi, and thanks for hosting! A few quick clarifications:\n\n1. Are the monetary prizes ($500 / $150) awarded on the overall leaderboard, or separately for the ML and DL categories?\n2. For the final submission, is uploading the CSV fine as long as we share the notebook that generates it, or must the CSV be produced by a notebook submitted through Kaggle? And how should we declare which category (ML or DL) each final submission belongs to?\n3. How should we share the email address linked to our Kaggle account?\n\nThanks!",
+      "content": "<p>Hi, and thanks for hosting! A few quick clarifications:</p>\n<ol>\n<li>Are the monetary prizes ($500 / $150) awarded on the overall leaderboard, or separately for the ML and DL categories?</li>\n<li>For the final submission, is uploading the CSV fine as long as we share the notebook that generates it, or must the CSV be produced by a notebook submitted through Kaggle? And how should we declare which category (ML or DL) each final submission belongs to?</li>\n<li>How should we share the email address linked to our Kaggle account?</li>\n</ol>\n<p>Thanks!</p>",
+      "parent": {},
+      "author": {
+        "displayName": "Andre",
+        "thumbnailUrl": "https://storage.googleapis.com/kaggle-avatars/thumbnails/default-thumb.png",
+        "url": "/andreagalesso",
+        "tier": "CONTRIBUTOR",
+        "id": 36375275,
+        "progressionOptOut": true
+      },
+      "authorType": "TOPIC",
+      "votes": {
+        "canUpvote": true
+      },
+      "kernelVersion": 0,
+      "competitionRanking": 6,
+      "feedbackTrackingData": {},
+      "isThankYou": false,
+      "teamUpInfo": {
+        "teamLeader": {
+          "displayName": "Andre",
+          "thumbnailUrl": "https://storage.googleapis.com/kaggle-avatars/thumbnails/default-thumb.png",
+          "url": "/andreagalesso",
+          "userName": "andreagalesso",
+          "tier": "CONTRIBUTOR",
+          "id": 36375275,
+          "profileUrl": "/andreagalesso",
+          "performanceTier": "CONTRIBUTOR",
+          "userId": 36375275,
+          "progressionOptOut": true
+        },
+        "intro": ""
+      }
+    }
+  ],
+  "commentSort": "COMMENT_LIST_SORT_BY_HOT"
+}
