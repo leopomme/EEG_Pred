@@ -2,6 +2,7 @@
 data/
 external_doc_eg_kagle/
 extraernal_doc_eg_kagle/
+external_datasets/
 artifacts/
 logs/
 results/
@@ -18,6 +19,7 @@ submissions/
 *.pth
 *.ckpt
 *.bin
+*.joblib
 
 # Python
 __pycache__/
@@ -34,3 +36,6 @@ venv/
 *.e
 *.o[0-9]*
 *.e[0-9]*
+
+# Generated handoff archives and manifests
+deliverables/

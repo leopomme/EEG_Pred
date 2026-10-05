@@ -3,8 +3,11 @@
 #PBS -l select=1:ncpus=4:mem=12gb
 #PBS -l walltime=00:40:00
 #PBS -j oe
+#PBS -o /rds/general/user/lh5218/home/EEG_pred/logs/
+#PBS -e /rds/general/user/lh5218/home/EEG_pred/logs/
 set -euo pipefail
 cd /rds/general/user/lh5218/home/EEG_pred
+mkdir -p logs
 exec > logs/ml_cross_screen.log 2>&1
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
 /rds/general/user/lh5218/home/anaconda3/envs/myenv/bin/python -u scripts/run_classical.py --competition cross_subject --folds 0,1,2,3,4 --output results/cross_subject/ml_screen

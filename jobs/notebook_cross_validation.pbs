@@ -1,0 +1,16 @@
+#!/bin/bash
+#PBS -N eeg_nb_cross
+#PBS -l select=1:ncpus=2:mem=10gb
+#PBS -l walltime=00:15:00
+#PBS -j oe
+#PBS -o /rds/general/user/lh5218/home/EEG_pred/logs/
+#PBS -e /rds/general/user/lh5218/home/EEG_pred/logs/
+set -euo pipefail
+cd /rds/general/user/lh5218/home/EEG_pred
+mkdir -p logs
+exec > logs/notebook_cross_validation_01.log 2>&1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+PY=/rds/general/user/lh5218/home/anaconda3/envs/myenv/bin/python
+# Fold 0 only: this reference does not evaluate the reserved confirmation group.
+"$PY" -u scripts/run_classical.py --competition cross_subject --recipes erp_pre --folds 0 --fit-final --output results/cross_subject/notebook_reference_01
+"$PY" -u scripts/run_notebook_local.py notebooks/cross_subject_ml.ipynb --data-root data/cross_subject --output results/cross_subject/notebook_validation_01 --compare-predictions results/cross_subject/notebook_reference_01/erp_pre_test_predictions.csv

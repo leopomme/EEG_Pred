@@ -16,6 +16,7 @@ import os
 from pathlib import Path
 import sys
 import time
+import warnings
 
 os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -32,6 +33,34 @@ from eeg_comp.neural import NeuralConfig, PhaseConvNet, binary_metrics, seed_eve
 
 WINDOWS = {"task0_2": (0.0, 2.0), "task0_48": (0.0, 4.8), "baseline_m2_0": (-2.0, 0.0)}
 CHANNELS = ["Fz", "C3", "Cz", "C4", "PO7", "Pz", "PO8", "Oz"]
+
+
+def file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def implementation_provenance() -> dict:
+    root = Path(__file__).resolve().parents[1]
+    return {name: file_sha256(root / name)
+            for name in ("eeg_comp/neural.py", "scripts/run_neural.py")}
+
+
+def runtime_provenance() -> dict:
+    """Record numerical settings used by both training and checkpoint replay."""
+    return {"deterministic_algorithms": torch.are_deterministic_algorithms_enabled(),
+            "cudnn_deterministic": torch.backends.cudnn.deterministic,
+            "cudnn_benchmark": torch.backends.cudnn.benchmark,
+            "cudnn_allow_tf32": torch.backends.cudnn.allow_tf32,
+            "cuda_matmul_allow_tf32": torch.backends.cuda.matmul.allow_tf32,
+            "float32_matmul_precision": torch.get_float32_matmul_precision(),
+            "cudnn_version": torch.backends.cudnn.version(),
+            "cuda_version": torch.version.cuda,
+            "cpu_threads": torch.get_num_threads(),
+            "cublas_workspace_config": os.environ.get("CUBLAS_WORKSPACE_CONFIG")}
 
 
 @dataclass
@@ -185,6 +214,8 @@ def load_cache(cache_dir: Path, competition: str, window: str) -> tuple[np.ndarr
     cache_info = {"cache_directory": str(cache_dir.resolve()), "fs": fs, "cue_index": cue,
                   "crop_samples": [start, end], "channels": CHANNELS,
                   "metadata_sha256": hashlib.sha256(metadata_path.read_bytes()).hexdigest(),
+                  "epochs_sha256": file_sha256(cache_dir / "epochs.npz"),
+                  "audit_sha256": file_sha256(cache_dir / "audit.json") if (cache_dir / "audit.json").exists() else None,
                   "normalization": "runtime per trial per channel; no fitted state",
                   "filtering": "none", "invalid_crop_policy": "fail; no padding or trial removal"}
     return x, labels, meta, cache_info
@@ -309,6 +340,8 @@ def checkpoint(path: Path, model: PhaseConvNet, args: argparse.Namespace, *,
                 "model_config": model.configuration(), "competition": args.competition,
                 "window": args.window, "epochs": epochs, "seed": seed,
                 "train_epoch_indices": train.tolist(), "cache_info": cache_info,
+                "implementation_sha256": implementation_provenance(),
+                "runtime": runtime_provenance(),
                 "label_mapping": {"rest": 0, "move": 1}}, path)
 
 
@@ -335,6 +368,14 @@ def inference_from_checkpoints(args: argparse.Namespace, x: np.ndarray, meta: pd
         for key in ("metadata_sha256", "crop_samples", "fs", "cue_index", "channels"):
             if state["cache_info"].get(key) != cache_info[key]:
                 raise ValueError(f"Checkpoint cache contract mismatch: {key}")
+        if "epochs_sha256" in state["cache_info"]:
+            if state["cache_info"]["epochs_sha256"] != cache_info["epochs_sha256"]:
+                raise ValueError("Checkpoint cache contract mismatch: epochs_sha256")
+        else:
+            warnings.warn("Legacy checkpoint has no signal-cache hash; historical raw-cache identity is unverified.")
+        saved_implementation = state.get("implementation_sha256", {})
+        if saved_implementation.get("eeg_comp/neural.py") not in (None, implementation_provenance()["eeg_comp/neural.py"]):
+            raise ValueError("Checkpoint neural implementation hash differs from current source")
         trained = meta.iloc[state["train_epoch_indices"]]
         expected = meta.loc[meta["split"].eq("train") & (True if person is None else meta["subject"].eq(person))]
         if not np.array_equal(trained["epoch_index"], expected["epoch_index"]):
@@ -363,6 +404,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=20261003)
     parser.add_argument("--device", choices=["cuda", "cpu"], default="cuda")
     parser.add_argument("--threads", type=int, default=4)
+    parser.add_argument("--disable-tf32", action="store_true",
+                        help="Explicit numerical contrast: disable CUDA matmul and cuDNN TF32")
     parser.add_argument("--max-epochs", type=int, default=60)
     parser.add_argument("--patience", type=int, default=10)
     parser.add_argument("--batch-size", type=int, default=64)
@@ -396,6 +439,12 @@ def main() -> None:
     torch.set_num_threads(args.threads)
     if args.device == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("No allocated CUDA GPU. Use PBS GPU resources; --device cpu is for explicit small smoke tests.")
+    # Training calls this inside fit(); checkpoint-only inference needs the same
+    # deterministic backend policy before its first convolution as well.
+    seed_everything(args.seed)
+    if args.disable_tf32:
+        torch.backends.cuda.matmul.allow_tf32 = False
+        torch.backends.cudnn.allow_tf32 = False
     device = torch.device(args.device)
     x, y, meta, cache_info = load_cache(args.cache, args.competition, args.window)
     weights = protocol_weights(meta)
@@ -406,6 +455,8 @@ def main() -> None:
     config = NeuralConfig()
     config_record = {"arguments": {key: str(value) if isinstance(value, Path) else value for key, value in vars(args).items()},
                      "model": asdict(config), "cache": cache_info, "torch_version": str(torch.__version__),
+                     "implementation_sha256": implementation_provenance(),
+                     "runtime": runtime_provenance(),
                      "device": str(device), "gpu": torch.cuda.get_device_name(0) if device.type == "cuda" else None,
                      "category": "end-to-end DL", "test_run_weights": weights,
                      "epoch_selection": "inner source-person validation for Cross; own-person calibration validation for Within",

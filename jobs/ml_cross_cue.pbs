@@ -1,0 +1,17 @@
+#!/bin/bash
+#PBS -N eeg_ml_cue
+#PBS -l select=1:ncpus=2:mem=10gb
+#PBS -l walltime=00:20:00
+#PBS -j oe
+#PBS -o /rds/general/user/lh5218/home/EEG_pred/logs/
+#PBS -e /rds/general/user/lh5218/home/EEG_pred/logs/
+set -euo pipefail
+cd /rds/general/user/lh5218/home/EEG_pred
+mkdir -p logs
+exec > logs/ml_cross_cue.log 2>&1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+PY=/rds/general/user/lh5218/home/anaconda3/envs/myenv/bin/python
+"$PY" -u scripts/run_classical.py --competition cross_subject --recipes erp_pre_car,erp_pre_centered,erp_pre_unitnorm,erp_pre_central,erp_pre_posterior,erp_firstsecond,erp_secondsecond --output results/cross_subject/ml_cue
+"$PY" -u scripts/run_classical.py --competition cross_subject --recipes erp_pre_rbf --C 1 --output results/cross_subject/ml_cue_rbf
+"$PY" -u scripts/run_classical.py --competition cross_subject --recipes erp_pre --weighting target --output results/cross_subject/ml_cue_runweighted
+"$PY" -u scripts/run_classical.py --competition cross_subject --recipes erp_pre --permutation 90210 --output results/cross_subject/ml_cue_permuted

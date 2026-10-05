@@ -76,8 +76,19 @@ def summarize(oof, meta, seed=20261003):
     result['per_subject'] = {str(k): binary_metrics(g.y, g.p_move) for k, g in oof.groupby('subject')}
     test_weights = meta.loc[meta.split.eq('test'), 'run'].value_counts(normalize=True).to_dict()
     result['target_run_weights'] = test_weights
-    result['target_weighted_accuracy'] = float(sum(test_weights.get(int(k), 0)*v['accuracy']
-                                                   for k,v in result['per_run'].items()))
+    required_runs = set(test_weights)
+    observed_runs = set(oof.run.unique())
+    missing_runs = sorted(required_runs - observed_runs)
+    coverage = float(sum(weight for run,weight in test_weights.items() if run in observed_runs))
+    weighted_accuracy = float(sum(test_weights.get(int(k), 0)*v['accuracy']
+                                  for k,v in result['per_run'].items()))
+    result['target_run_coverage'] = coverage
+    result['missing_target_runs'] = [int(run) for run in missing_runs]
+    result['target_weighted_accuracy'] = weighted_accuracy if test_weights and not missing_runs else None
+    result['conditional_target_weighted_accuracy'] = weighted_accuracy / coverage if coverage else None
+    result['target_weighting_note'] = (
+        'Target accuracy requires every target run. Conditional target accuracy renormalizes '
+        'target weights over observed runs; it is unavailable when there is no overlap.')
     # Within-domain ranking is distinguishable from cross-person score offsets.
     domain_metrics = {f'{s}/run{r}': binary_metrics(g.y, g.p_move)
                       for (s,r),g in oof.groupby(['subject','run'])}
@@ -85,16 +96,30 @@ def summarize(oof, meta, seed=20261003):
     aucs = [v['auc'] for v in domain_metrics.values() if v['auc'] is not None]
     result['mean_domain_auc'] = float(np.mean(aucs)) if aucs else None
     people = sorted(oof.subject.unique())
-    values = []
+    target_values, conditional_values, empirical_values = [], [], []
     for person in people:
         p = oof[oof.subject.eq(person)]
         per_run = p.groupby('run').apply(lambda g: float(np.mean((g.p_move >= .5) == g.y)))
         available = sum(test_weights.get(int(r), 0) for r in per_run.index)
-        values.append(sum(test_weights.get(int(r),0)*acc for r,acc in per_run.items())/available
-                      if available else float(np.mean((p.p_move >= .5) == p.y)))
-    rng = np.random.default_rng(seed)
-    boot = np.mean(rng.choice(values, (2000, len(values)), replace=True), axis=1)
-    result['subject_macro_target_accuracy'] = float(np.mean(values))
-    result['subject_bootstrap_95ci'] = np.quantile(boot, [.025, .975]).tolist()
+        empirical_values.append(float(np.mean((p.p_move >= .5) == p.y)))
+        if available:
+            conditional = sum(test_weights.get(int(r),0)*acc for r,acc in per_run.items())/available
+            conditional_values.append(conditional)
+            if not required_runs - set(per_run.index):
+                target_values.append(conditional)
+
+    def mean_and_interval(values):
+        # An incomplete set of participant estimands must not silently omit
+        # missing participants or substitute their empirical run mixture.
+        if len(values) != len(people) or not values:
+            return None, None
+        rng = np.random.default_rng(seed)
+        boot = np.mean(rng.choice(values, (2000, len(values)), replace=True), axis=1)
+        return float(np.mean(values)), np.quantile(boot, [.025, .975]).tolist()
+
+    result['subject_macro_target_accuracy'], result['subject_bootstrap_95ci'] = mean_and_interval(target_values)
+    result['subject_macro_conditional_target_accuracy'], result['subject_conditional_target_bootstrap_95ci'] = mean_and_interval(conditional_values)
+    result['subject_macro_empirical_accuracy'], result['subject_macro_empirical_bootstrap_95ci'] = mean_and_interval(empirical_values)
+    result['subject_bootstrap_estimand'] = 'Participant mean of target-run-weighted accuracy; requires every target run per participant.'
     result['uncertainty_note'] = 'Descriptive participant bootstrap; few people and shared training folds limit precision.'
     return result

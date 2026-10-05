@@ -1,0 +1,18 @@
+#!/bin/bash
+#PBS -N eeg_dl_replay
+#PBS -l select=1:ncpus=4:mem=12gb:ngpus=1:gpu_type=L40S
+#PBS -l walltime=00:10:00
+#PBS -j oe
+#PBS -o /rds/general/user/lh5218/home/EEG_pred/logs/
+#PBS -e /rds/general/user/lh5218/home/EEG_pred/logs/
+set -euo pipefail
+cd /rds/general/user/lh5218/home/EEG_pred
+mkdir -p logs
+exec > logs/neural_gpu_replay.log 2>&1
+export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+export CUBLAS_WORKSPACE_CONFIG=:4096:8
+PY=/rds/general/user/lh5218/home/anaconda3/envs/myenv/bin/python
+nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv
+"$PY" -u scripts/run_neural.py --competition within_subject --window task0_48 --inference-from results/within_subject/dl_pilot_full --output results/within_subject/dl_replay_gpu
+"$PY" -u scripts/verify_neural_reload.py --experiment results/within_subject/dl_pilot_full --reloaded results/within_subject/dl_replay_gpu
+"$PY" -u scripts/run_neural.py --competition within_subject --window task0_48 --inference-from results/within_subject/dl_pilot_full --disable-tf32 --output results/within_subject/dl_replay_gpu_fp32

@@ -126,7 +126,10 @@ class SplitTests(unittest.TestCase):
         meta, y = meta.loc[keep].reset_index(drop=True), y[keep]
         for fold in make_folds(meta, y, "within_subject", 20261003):
             self.assertEqual(set(meta.iloc[fold.inner_valid].run), {1})
-            self.assertEqual(len(fold.inner_valid), 4)
+            # Three examples per class split as two for training and one for
+            # validation, so each calibration half remains class-balanced.
+            self.assertEqual(len(fold.inner_valid), 2)
+            np.testing.assert_array_equal(np.bincount(y[fold.inner_valid]), [1, 1])
             self.assertFalse(np.intersect1d(fold.query, fold.inner_train).size)
 
     def test_protocol_selection_loss_uses_declared_run_weights(self):
@@ -184,6 +187,9 @@ class CacheAndInferenceTests(unittest.TestCase):
             inference_from_checkpoints(args, x, meta, info, torch.device("cpu"))
             result = pd.read_csv(output / "test_predictions.csv")
             np.testing.assert_allclose(result.p_move, expected, rtol=1e-6, atol=1e-6)
+            changed_signals = dict(info, epochs_sha256="different")
+            with self.assertRaisesRegex(ValueError, "epochs_sha256"):
+                inference_from_checkpoints(args, x, meta, changed_signals, torch.device("cpu"))
             info["metadata_sha256"] = "different"
             with self.assertRaisesRegex(ValueError, "cache contract"):
                 inference_from_checkpoints(args, x, meta, info, torch.device("cpu"))

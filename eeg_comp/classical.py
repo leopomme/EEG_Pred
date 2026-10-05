@@ -4,6 +4,7 @@ import numpy as np
 from scipy import linalg, signal
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
 
 CHANNELS = ('Fz', 'C3', 'Cz', 'C4', 'PO7', 'Pz', 'PO8', 'Oz')
 BANDS = ((1., 4.), (4., 8.), (8., 13.), (13., 20.), (20., 30.), (30., 45.))
@@ -17,6 +18,9 @@ class Recipe:
     channels: tuple = tuple(range(8))
     bands: tuple = BANDS
     relative: bool = False
+    reference: str = 'native'
+    erp_mode: str = 'baseline'
+    classifier: str = 'logistic'
 
 
 # Prespecified, interpretable contrasts, not an automatic model search.
@@ -37,6 +41,15 @@ RECIPES = {
     'tangent_posterior': Recipe('tangent', channels=(4, 5, 6, 7)),
     'csp_full': Recipe('csp'),
     'paired_cov_full': Recipe('paired'),
+    # Focused cue-response follow-up: each isolates one mechanism.
+    'erp_pre_car': Recipe('erp', (0., 2.), reference='car'),
+    'erp_pre_centered': Recipe('erp', (0., 2.), erp_mode='centered'),
+    'erp_pre_unitnorm': Recipe('erp', (0., 2.), erp_mode='unitnorm'),
+    'erp_pre_rbf': Recipe('erp', (0., 2.), classifier='rbf'),
+    'erp_pre_central': Recipe('erp', (0., 2.), (1, 2, 3)),
+    'erp_pre_posterior': Recipe('erp', (0., 2.), (4, 5, 6, 7)),
+    'erp_firstsecond': Recipe('erp', (0., 1.)),
+    'erp_secondsecond': Recipe('erp', (1., 2.)),
 }
 
 
@@ -81,9 +94,15 @@ def vectorize(c):
 def extract(X, recipe):
     """Return trial-local features/covariances; supervised fitting happens later."""
     x = crop(X, recipe.window, recipe.channels)
+    if recipe.reference == 'car':
+        x = x - x.mean(axis=-2, keepdims=True)
+    elif recipe.reference != 'native':
+        raise ValueError(recipe.reference)
     if recipe.kind == 'erp':
         # Runtime trial-local scaling; no pooled target statistics.
         baseline = crop(X, (-2., 0.), recipe.channels)
+        if recipe.reference == 'car':
+            baseline = baseline - baseline.mean(axis=-2, keepdims=True)
         offset = np.median(baseline, axis=-1, keepdims=True)
         scale = np.maximum(np.std(baseline, axis=-1, keepdims=True), 1e-6)
         if recipe.window[1] <= 0:
@@ -92,6 +111,12 @@ def extract(X, recipe):
         x = (x - offset) / scale
         sos = signal.butter(4, 20., btype='lowpass', fs=FS, output='sos')
         x = signal.sosfiltfilt(sos, x, axis=-1)
+        if recipe.erp_mode in ('centered', 'unitnorm'):
+            x = x - x.mean(axis=-1, keepdims=True)
+        if recipe.erp_mode == 'unitnorm':
+            x = x / np.maximum(np.sqrt(np.mean(x*x,axis=(-2,-1),keepdims=True)),1e-6)
+        if recipe.erp_mode not in ('baseline','centered','unitnorm'):
+            raise ValueError(recipe.erp_mode)
         # 40-ms averages retain cue-locked shape with modest dimensionality.
         n = x.shape[-1] // 10
         x = x[..., :n * 10].reshape(*x.shape[:-1], n, 10).mean(-1)
@@ -103,6 +128,8 @@ def extract(X, recipe):
     if recipe.kind == 'power' and not recipe.relative:
         return np.log(power).reshape(len(x), -1).astype('float32')
     base = crop(X, (-2., 0.), recipe.channels)
+    if recipe.reference == 'car':
+        base = base - base.mean(axis=-2, keepdims=True)
     base_cov = np.stack([covariance(filtered(base, band)) for band in recipe.bands], axis=1)
     if recipe.kind == 'power':
         base_power = np.maximum(np.diagonal(base_cov, axis1=-2, axis2=-1), 1e-12)
@@ -158,7 +185,12 @@ class ClassicalModel:
         x = self._represent(features)
         self.scaler_ = StandardScaler().fit(x, sample_weight=sample_weight)
         x = self.scaler_.transform(x)
-        self.classifier_ = LogisticRegression(C=self.C, max_iter=1000, solver='lbfgs')
+        if self.recipe.classifier == 'logistic':
+            self.classifier_ = LogisticRegression(C=self.C, max_iter=1000, solver='lbfgs')
+        elif self.recipe.classifier == 'rbf':
+            self.classifier_ = SVC(C=self.C, kernel='rbf', gamma='scale', probability=True, random_state=20261003)
+        else:
+            raise ValueError(self.recipe.classifier)
         self.classifier_.fit(x, y, sample_weight=sample_weight)
         return self
 
