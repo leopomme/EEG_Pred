@@ -1,0 +1,47 @@
+#!/bin/bash
+#PBS -N eeg_v2_retry
+#PBS -l select=1:ncpus=4:mem=12gb:ngpus=1:gpu_type=RTX6000
+#PBS -l walltime=00:30:00
+#PBS -j oe
+#PBS -o /rds/general/user/lh5218/home/EEG_pred/logs/
+#PBS -e /rds/general/user/lh5218/home/EEG_pred/logs/
+set -euo pipefail
+cd /rds/general/user/lh5218/home/EEG_pred
+mkdir -p logs
+exec > "logs/neural_v2_retry_${PBS_JOBID:-local}.log" 2>&1
+export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+export CUBLAS_WORKSPACE_CONFIG=:4096:8
+PY=/rds/general/user/lh5218/home/anaconda3/envs/myenv/bin/python
+nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv
+"$PY" -m unittest discover -s tests -p test_neural_v2.py -v
+"$PY" - <<'PY'
+import json
+from pathlib import Path
+import torch
+from eeg_comp.neural import seed_everything
+from eeg_comp.neural_v2 import NeuralV2Config, RawEEGV2
+seed_everything(20261003)
+assert torch.cuda.is_available()
+for competition in ('cross_subject', 'within_subject'):
+    root = Path('results') / competition / 'v2_native_reference'
+    result = json.loads((root / 'metrics.json').read_text())
+    config = json.loads((root / 'config.json').read_text())
+    assert result['complete_requested_validation']
+    assert config['gpu'] == torch.cuda.get_device_name(0)
+for mode in ('phase_stable', 'phase_baseline', 'cue_baseline'):
+    samples = 500 if mode == 'cue_baseline' else 1200
+    model = RawEEGV2(NeuralV2Config(mode=mode, task_samples=samples)).cuda()
+    x = torch.randn(4, 8, 500 + samples, device='cuda') + 500000
+    loss = torch.nn.functional.binary_cross_entropy_with_logits(
+        model(x), torch.tensor([0., 1., 0., 1.], device='cuda'))
+    loss.backward()
+    assert torch.isfinite(loss)
+    assert all(p.grad is not None and torch.isfinite(p.grad).all() for p in model.parameters())
+    print(json.dumps({'deterministic_cuda_backward_passed': mode}), flush=True)
+PY
+for competition in cross_subject within_subject; do
+    for mode in phase_stable phase_baseline cue_baseline; do
+        "$PY" -u scripts/run_neural_v2.py --competition "$competition" --mode "$mode" --output "results/$competition/v2_$mode"
+    done
+    "$PY" -u scripts/compare_neural_v2.py --competition "$competition"
+done

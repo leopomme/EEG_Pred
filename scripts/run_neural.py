@@ -247,10 +247,14 @@ def report_metrics(frame: pd.DataFrame, weights: dict[int, float]) -> dict:
                              for person, group in frame.groupby("subject")}
     available = {run: weight for run, weight in weights.items() if str(run) in result["per_run"]}
     result["target_run_weights"] = weights
-    result["target_weighted_accuracy"] = sum(
+    coverage = sum(available.values())
+    weighted = sum(
         weight * result["per_run"][str(run)]["accuracy"] for run, weight in available.items()
-    ) / sum(available.values()) if available else None
+    )
     result["missing_target_runs"] = sorted(set(weights) - set(available))
+    result["target_run_coverage"] = coverage
+    result["target_weighted_accuracy"] = weighted if available and not result["missing_target_runs"] else None
+    result["conditional_target_weighted_accuracy"] = weighted / coverage if coverage else None
     return result
 
 

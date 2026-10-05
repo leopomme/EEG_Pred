@@ -21,7 +21,8 @@ work. A percentage completion or guaranteed final score would be misleading.
 | First stronger-candidate comparisons | Complete | Personal offset did not improve accuracy; Cross template gain did not confirm on the primary metric. |
 | Frozen Cross confirmation | Complete | S019/S020 are now used and no longer an untouched set. |
 | Standalone ML/DL artifacts | Locally validated | Four baseline notebooks and an optional ML alternative execute from raw data. |
-| Kaggle execution and final selection | Not started | Account authentication or user-run notebooks required. |
+| Kaggle execution and final selection | User will execute | First leaderboard scores are pending. |
+| Round 2 normalization/cue and joint-feature experiments | Complete | No submission replacement established; own-person neural follow-up remains. |
 
 ## Completed preparation and boundaries
 
@@ -77,6 +78,12 @@ run weighting. Within rows use held-out run3 queries.
 | Within fixed CSP, 85 forward queries | 67.06% |
 | Within personal selector, without / with offset | 70.00% / 68.24% |
 | Within fixed full-window neural, 170 crossfit queries | 60.00% |
+| Cross matched RTX6000 neural / stable centering | 66.85% / 66.85% |
+| Cross baseline-normalized phase / early-cue neural | 64.81% / 66.26% |
+| Within matched RTX6000 / baseline-normalized phase | 61.76% / 65.88% |
+| Within stable centering / early-cue neural | 61.18% / 61.76% |
+| Cross joint ERP+CSP, same development | 66.12% |
+| Within joint ERP+CSP, prefix / forward | 72.35% / 69.41% |
 
 Cross cue-sensitive ERP outperforms the initial power/covariance baselines.
 Reference changes, RBF and run weighting did not establish a gain. Template
@@ -90,6 +97,15 @@ pooled accuracy and loss, but feedback accuracy fell from 65% to 55% on only
 is a mixed-evidence alternative, with no confirmation tuning. DL remains a
 separate category baseline needing improvement. Within offset adaptation
 improved probability loss but not accuracy; no accuracy-based promotion.
+
+Round 2 does not establish a replacement for the first submission notebooks.
+Cross baseline-conditioned neural models and joint classical features lose
+accuracy. Within baseline-conditioned phase improves over its matched neural
+control by4.12 points, descriptive paired interval[-2.35,+11.18]; it earns an
+own-person source-selection/forward follow-up, not pooled model selection.
+Within joint features improve only two net decisions in each protocol while
+loss worsens. Keep the current handoff. See
+[ROUND2_EXPERIMENTS.md](docs/ROUND2_EXPERIMENTS.md) and [JOINT_ML.md](docs/JOINT_ML.md).
 
 Details: [EXPERIMENTS.md](docs/EXPERIMENTS.md),
 [ERP_TEMPLATE.md](docs/ERP_TEMPLATE.md), [PERSONAL_MODEL.md](docs/PERSONAL_MODEL.md),
@@ -131,8 +147,10 @@ See [NOTEBOOK_VALIDATION.md](docs/NOTEBOOK_VALIDATION.md) and
   .500222 GPU versus .499801 CPU). Cross-device identity has not passed;
   tolerances were not widened.
 - Large-DC float32 centering is a plausible contributor, supported by a synthetic
-  check. Real-data layer isolation/stable-centering remain follow-up work;
-  no model change was silently applied.
+  check. Round 2 tests stable centering in separately recorded variants: no Cross
+  decisions change against the matched native model, and one Within decision
+  changes. This does not establish cross-device identity or isolate the original
+  CPU discrepancy; historical notebook models were not silently changed.
 - Early pilots lack historical signal/source hashes. New notebooks record full
   provenance, but replay cannot retroactively prove missing historical identity.
 
@@ -140,7 +158,29 @@ See [NEURAL_PRECISION.md](docs/NEURAL_PRECISION.md).
 
 ## Latest jobs and exact restart state
 
-**All project jobs have completed; none remains queued/running at this update.**
+**All Round 2 jobs have completed; no project job remains queued/running.**
+Inspect `qstat -u lh5218` and saved outputs before resubmitting any job.
+
+- 4272749: complete neural rerun after deterministic pooling repair, both
+  competitions on Quadro RTX 6000, cx3-11-8, exit0,7m59s. All three modes pass
+  CUDA backward; all117 variant checkpoints replay exactly.
+- 4272737/8: matched native controls completed; new variants reached the cue
+  branch, then failed before fitting it because adaptive pooling lacks a
+  deterministic CUDA backward path. Pre-fix variants are archived and rerun.
+- 4272743: fixed ERP+CSP classical experiment completed for Cross development
+  and Within prefix/forward validation; all saved fold models replay exactly.
+- 4272742: **63 tests passed**,112.07 s; subsequent pooling regression suite
+  **nine tests passed**, including matching forward values and gradients.
+- 4273255: final expanded suite **66 tests passed**,128.20 s, exit0.
+- 4272698: all six two-epoch CPU neural smoke routes completed successfully.
+- 4272685:58 tests passed. The new joint model adds five behavioral tests.
+
+The RTX6000 allocations report24,576 MiB and driver580.82.07. The original
+L40S submissions remain unchanged. Earlier Round 2 L40S allocations4272677/8
+failed before training because their node exposed no GPU; host-pinned retries
+4272696/7 were cancelled while queued. No incomplete fit was reused.
+
+Earlier completed baseline jobs:
 
 - 4268135: exact GPU replay plus TF32 contrast.
 - 4268144: both DL notebooks and frozen Cross DL confirmation.
@@ -171,11 +211,9 @@ and `qstat -u lh5218` before resubmitting; do not mistake interruptions for fail
 - [ ] Resolve relevant eligibility questions before advanced adaptation,
   checkpoint-only inference, ensembles or external-model use.
 
-An existence-only check on 5 October found no standard Kaggle credential files
-or configured token variables. No secret was read. Execution there requires
-locally configured account access or user-run notebooks; this does not block
-local research. No organizer messages, Kaggle uploads/submissions or external-data
-experiments have been performed.
+The user will execute notebooks and submit in Kaggle. No organizer messages,
+Kaggle uploads/submissions or external-data training experiments have been
+performed by the assistant.
 
 **User choice on 5 October: the user will run the notebooks in Kaggle.** Do not
 request credentials again. The handoff archive is
@@ -199,12 +237,26 @@ outcome. Detailed new reviews are in
   All PBS scripts now direct future wrapper outputs into ignored `logs/`.
 - External datasets, fitted joblib files and generated deliverables explicitly
   ignored in Git. Raw EEG/models remain outside commits.
-- Baseline checkpoint commit/push requested. GitHub SSH currently rejects the
-  configured key; public HTTPS reads work. Authentication is being checked;
-  a failed push must be reported separately from successful local commits.
-- Three isolated neural contrasts are being implemented: stable task centering,
+- Baseline checkpoint committed as **886352e**. Push failed because GitHub
+  authentication was unavailable. **The user will push the commits themselves**;
+  do not retry authentication or request credentials. Further changes are
+  committed locally after validation.
+- Three fixed neural contrasts are implemented: stable task centering,
   baseline-referenced full-window normalization, and a compact early-cue model
   preserving cue-relative amplitude. Original validated notebooks are preserved.
-  Eight model behavioral tests already pass; full development runs are next.
+  Eight model behavioral tests and all six CPU smoke routes pass. Full runs
+  include a matched-device historical control. See
+  [ROUND2_EXPERIMENTS.md](docs/ROUND2_EXPERIMENTS.md).
+- A single ERP+CSP classifier tests complementary cue and oscillatory features
+  without probability blending. Seven behavioral/comparison tests pass, and
+  all56 saved fold models replay exactly. See
+  [JOINT_ML.md](docs/JOINT_ML.md).
+- The research-pack inventory, primary-source review and strict all-file
+  ds003810 event/header audit are complete. Its imagery subset contains1,590
+  trials; all support baseline[-2,0) and task[0,2), but none supports4.8s.
+  One execution trial lacks an observed end marker; native EDF units are blank
+  despite sidecar microvolt declarations. See
+  [EXTERNAL_LOW_COST_AUDIT.md](docs/EXTERNAL_LOW_COST_AUDIT.md).
+  No external signal has entered a competition model.
 - No reuse of S019/S020 for tuning or new confirmation is planned. External
   resources must pass task/channel/provenance/eligibility audits before training.

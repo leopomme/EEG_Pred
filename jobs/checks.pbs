@@ -8,6 +8,6 @@
 set -euo pipefail
 cd /rds/general/user/lh5218/home/EEG_pred
 mkdir -p logs
-exec > logs/checks.log 2>&1
+exec > "logs/checks_${PBS_JOBID:-local}.log" 2>&1
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
 /rds/general/user/lh5218/home/anaconda3/envs/myenv/bin/python -m unittest discover -s tests -v

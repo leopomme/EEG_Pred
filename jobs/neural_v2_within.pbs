@@ -1,0 +1,19 @@
+#!/bin/bash
+#PBS -N eeg_v2_within
+#PBS -l select=1:ncpus=4:mem=12gb:ngpus=1:gpu_type=RTX6000
+#PBS -l walltime=00:30:00
+#PBS -j oe
+#PBS -o /rds/general/user/lh5218/home/EEG_pred/logs/
+#PBS -e /rds/general/user/lh5218/home/EEG_pred/logs/
+set -euo pipefail
+cd /rds/general/user/lh5218/home/EEG_pred
+mkdir -p logs
+exec > logs/neural_v2_within.log 2>&1
+export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+export CUBLAS_WORKSPACE_CONFIG=:4096:8
+PY=/rds/general/user/lh5218/home/anaconda3/envs/myenv/bin/python
+nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv
+"$PY" -u scripts/run_neural.py --competition within_subject --window task0_48 --folds 0,1 --output results/within_subject/v2_native_reference
+for mode in phase_stable phase_baseline cue_baseline; do
+    "$PY" -u scripts/run_neural_v2.py --competition within_subject --mode "$mode" --output "results/within_subject/v2_$mode"
+done

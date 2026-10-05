@@ -11,7 +11,7 @@ from torch.nn import functional as F
 
 from eeg_comp.neural import NeuralConfig, PhaseConvNet, TrialChannelStandardize, binary_metrics
 from scripts.run_neural import (CHANNELS, checkpoint, inference_from_checkpoints,
-                                load_cache, make_folds, predict, weighted_protocol_loss)
+                                load_cache, make_folds, predict, report_metrics, weighted_protocol_loss)
 
 
 torch.set_num_threads(1)
@@ -138,6 +138,23 @@ class SplitTests(unittest.TestCase):
         runs = np.array([1, 1, 3, 3])
         expected = (-np.log(0.9) - np.log(0.5)) / 2
         self.assertAlmostEqual(weighted_protocol_loss(y, p, runs, {1: 0.5, 3: 0.5}), expected)
+
+    def test_partial_run_reporting_does_not_claim_full_target_accuracy(self):
+        frame = pd.DataFrame({'y': [0, 1], 'p_move': [.1, .9],
+                              'run': [1, 1], 'subject': ['S001', 'S001']})
+        partial = report_metrics(frame, {1: 1/3, 2: 1/3, 3: 1/3})
+        self.assertIsNone(partial['target_weighted_accuracy'])
+        self.assertEqual(partial['conditional_target_weighted_accuracy'], 1.)
+        self.assertAlmostEqual(partial['target_run_coverage'], 1/3)
+        self.assertEqual(partial['missing_target_runs'], [2, 3])
+        absent = report_metrics(frame, {3: 1.})
+        self.assertIsNone(absent['target_weighted_accuracy'])
+        self.assertIsNone(absent['conditional_target_weighted_accuracy'])
+        self.assertEqual(absent['target_run_coverage'], 0.)
+        complete = report_metrics(frame, {1: 1.})
+        self.assertEqual(complete['target_weighted_accuracy'], 1.)
+        self.assertEqual(complete['conditional_target_weighted_accuracy'], 1.)
+        self.assertEqual(complete['target_run_coverage'], 1.)
 
 
 class CacheAndInferenceTests(unittest.TestCase):

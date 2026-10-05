@@ -1,0 +1,14 @@
+#!/bin/bash
+#PBS -N eeg_joint_ml
+#PBS -l select=1:ncpus=2:mem=12gb
+#PBS -l walltime=00:15:00
+#PBS -j oe
+#PBS -o /rds/general/user/lh5218/home/EEG_pred/logs/
+#PBS -e /rds/general/user/lh5218/home/EEG_pred/logs/
+set -euo pipefail
+cd /rds/general/user/lh5218/home/EEG_pred
+mkdir -p logs
+exec > "logs/joint_ml_${PBS_JOBID:-local}.log" 2>&1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+/rds/general/user/lh5218/home/anaconda3/envs/myenv/bin/python -u scripts/run_joint_ml.py --competition cross_subject --output results/cross_subject/joint_ml_v2
+/rds/general/user/lh5218/home/anaconda3/envs/myenv/bin/python -u scripts/run_joint_ml.py --competition within_subject --output results/within_subject/joint_ml_v2
